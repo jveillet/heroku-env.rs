@@ -1,0 +1,8 @@
+version: "3"
+services:
+  app:
+    build:
+      context: .
+    volumes:
+      - "$PWD:/usr/src/heroku-env"
+    command: cargo run -- development
