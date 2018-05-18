@@ -1,0 +1,14 @@
+# Docker related files
+Dockerfile
+.dockerignore
+
+# Directories
+target
+.git
+
+# Miscellaneous dotfiles
+.editorconfig
+
+# Licence files and markdown files
+LICENSE
+*.md
