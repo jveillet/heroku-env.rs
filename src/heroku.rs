@@ -19,20 +19,7 @@ pub mod heroku {
       }
     }
 
-    pub fn config_vars(&mut self, app_name: String) -> String {
-
-      let url = format!("https://api.heroku.com/apps/{}/config-vars", app_name);
-
-      let mut response = self.client.get(&url)
-        .headers(self.construct_headers())
-        .send()
-        .expect("Failed to retrieve config vars.");
-
-      println!("body = {:?}", response.text());
-      response.text().unwrap()
-    }
-
-    pub fn set_config_vars(&mut self, app_name: String, configs: HashMap<&str, &str>) {
+    pub fn set_config_vars(&mut self, app_name: String, configs: HashMap<String, String>) {
 
       let url = format!("https://api.heroku.com/apps/{}/config-vars", app_name);
 
@@ -40,7 +27,7 @@ pub mod heroku {
         .headers(self.construct_headers())
         .json(&configs)
         .send()
-        .expect("Failed to retrieve config vars.");
+        .expect("Failed to set the app config vars.");
 
       println!("body = {:?}", response.text());
     }

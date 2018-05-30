@@ -5,12 +5,18 @@ RUN apt-get update -y \
       sudo libffi-dev libxml2-dev libssl-dev libcurl4-gnutls-dev curl apt-utils \
       && rm -rf /var/lib/apt/lists/*
 
-RUN curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
-
 WORKDIR /usr/src/heroku-env
 
 COPY . .
 
 RUN cargo install
+RUN cargo build --release
 
-CMD ["heroku-env"]
+WORKDIR /root
+
+RUN mkdir .heroku-env/
+COPY config/config.yml .heroku-env/
+
+WORKDIR /usr/src/heroku-env
+
+CMD ["cargo run"]

@@ -4,5 +4,6 @@ services:
     build:
       context: .
     volumes:
-      - "$PWD:/usr/src/heroku-env"
-    command: cargo run -- development
+      - ".:/usr/src/heroku-env"
+      - "./config/config.yml:/root/.heroku-env/config.yml"
+    command: cargo run
