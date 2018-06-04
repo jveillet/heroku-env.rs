@@ -40,7 +40,6 @@ fn main() {
     dotenv().expect("Couldn't find a .env file. Please create a .env file first.");
 
     let yaml_file = read_config_file();
-    println!("YAML file content => {}", yaml_file);
 
     let heroku_api_token =
         env::var("HK_API_TOKEN").expect("HK_API_TOKEN env variable not found in the .env");
@@ -50,7 +49,6 @@ fn main() {
 
     for app in heroku_config.apps {
         println!("Updating app {}", app.name);
-        println!("With settings => {:?}", app.settings);
         if app.settings.is_empty() {
             println!(
                 "Skipping update for => {:?}, no settings were found.",
@@ -99,9 +97,5 @@ fn development() -> bool {
         .map(String::as_str)
         .unwrap_or("development");
 
-    let mut result = false;
-    if app_env == "development" {
-        result = true;
-    }
-    result
+    app_env == "development"
 }

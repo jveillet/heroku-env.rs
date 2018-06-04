@@ -1,8 +1,10 @@
 FROM rust:1.26-slim-stretch
 
+ENV DEBIAN_FRONTEND noninteractive
+
 RUN apt-get update -y \
-      && apt-get --no-install-recommends install -y pkg-config git-core build-essential \
-      sudo libffi-dev libxml2-dev libssl-dev libcurl4-gnutls-dev curl apt-utils \
+      && apt-get --no-install-recommends install -y pkg-config apt-utils \
+      build-essential sudo libffi-dev libssl-dev \
       && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /usr/src/heroku-env
