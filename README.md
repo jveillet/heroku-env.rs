@@ -29,8 +29,8 @@ $ cargo install
 
 ### Compile from source
 
-**Note**: It only have been tested on Linux (Debian based distro). Feel free to clone the repository and
-try to compile on another OS. Another way is to build using Docker (Dockerfile and docker-compose available).
+**Note**: Same disclaimer has for the Installing part.
+Another way is to build using Docker (Dockerfile and docker-compose available).
 
 #### Compile locally
 
@@ -53,6 +53,26 @@ $ docker-compose run --rm app cargo run
 $ docker-compose up
 ```
 
+#### Rust formatting
+
+As a best practice, this project uses Rust fmt to format the code, and comply with the [Rust
+Styleguide](https://github.com/rust-lang-nursery/fmt-rfcs).
+
+To run Rust fmt, either install it on your system with rustup:
+
+```bash
+$ cd heroku-env
+$ rustup component add rustfmt-preview
+$ cargo fmt
+```
+
+Or use the Docker image built for this project.
+
+```bash
+$ cd heroku-env
+$ docker-compose run --rm app cargo fmt
+```
+
 ## Configuration
 
 ### Heroku Personal OAuth Token
@@ -62,7 +82,7 @@ In order to use the Heroku Platform API, you must obtain a Personal OAuth Token.
 If you have the Heroku CLI installed, you can extract it from the `~/.netrc` file on your system, or by launching the
 command `heroku auth:token` in a terminal.
 
-Copy the result and add it in the project in a .env file)
+Copy the result and add it in the project in a .env file.
 See this page about [dotenv](https://github.com/purpliminal/rust-dotenv) files for more informations.
 
 ```
@@ -82,6 +102,18 @@ Or you can export it as an environment variable into in your `~/.bashrc` or `~/.
 
 ```bash
 $ export HK_API_TOKEN="my_api_token"
+```
+
+### App Environment
+
+The tool can be used on two configurations, development mode, and production-like mode.
+
+By default, it will run in development mode.
+
+You can surcharge this mode by adding a `APP_ENV` key in the .env file.
+
+```bash
+$ echo "APP_ENV="production" >> .env
 ```
 
 ### Preferences
@@ -157,7 +189,7 @@ Consider adding the ~"feature request" label on your ticket.
 
 heroku-env is a free software: you can redistribute it and/or modify it under the terms of the [GNU GPL v3](LICENCE).
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-You should have received a copy of the GNU Affero General Public License along with this program. If not, see http://www.gnu.org/licenses/.
+You should have received a copy of the GNU General Public License along with this program. If not, see http://www.gnu.org/licenses/.
 
