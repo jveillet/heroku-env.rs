@@ -1,4 +1,4 @@
-FROM rust:1.25.0-stretch
+FROM rust:1.26-slim-stretch
 
 RUN apt-get update -y \
       && apt-get --no-install-recommends install -y pkg-config git-core build-essential \
@@ -9,7 +9,7 @@ WORKDIR /usr/src/heroku-env
 
 COPY . .
 
-RUN cargo install
+RUN rustup component add rustfmt-preview
 RUN cargo build --release
 
 WORKDIR /root
