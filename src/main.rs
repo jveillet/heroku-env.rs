@@ -21,21 +21,36 @@ use config::config as cfg;
 
 fn main() {
     let matches = App::new("heroku-env")
-        .version("0.0.4")
+        .version("0.0.5")
         .author("Jérémie Veillet <jeremie.veillet@gmail.com>")
         .about("CLI to Update or create environment variables on Heroku written in Rust.")
         .arg(
             Arg::with_name("run")
                 .short("r")
                 .long("run")
-                .help("Create or update config vars on Heroku"),
+                .help("Create or update config vars on Heroku")
+        )
+        .arg(Arg::with_name("config")
+                .short("c")
+                .long("config")
+                .value_name("FILE")
+                .help("Sets a user defined config file in YAML format")
+                .takes_value(true)
+                .requires("run")
         )
         .get_matches();
 
     dotenv().expect("Couldn't find a .env file. Please create a .env file first.");
 
     if matches.is_present("run") {
-        let heroku_config = cfg::Config::new(path());
+        let file_path;
+         if let Some(path) = matches.value_of("config") {
+            file_path = path.to_string();
+         } else {
+            let home_dir = env::home_dir().unwrap();
+            file_path = format!("{}/.heroku-env/config.yml", home_dir.display())
+         }
+        let heroku_config = cfg::Config::new(file_path);
         update_config_vars(heroku_config);
     }
 }
@@ -52,36 +67,6 @@ fn heroku_client() -> platform_api::PlatformAPI {
     platform_api::PlatformAPI::new(heroku_api_token.to_string())
 }
 
-/// Get the configuration file path
-/// # Result
-/// Sting
-/// The local configuration path in development or in the home directory
-///
-fn path() -> String {
-    if is_development() {
-        println!("APP_ENV is development.");
-        String::from("config/config.yml")
-    } else {
-        let home_dir = env::home_dir().unwrap();
-        format!("{}/.heroku-env/config.yml", home_dir.display())
-    }
-}
-
-/// Check if the environment is in development mode.
-///
-/// # Result
-/// bool True if the environment is in development mode.
-///
-fn is_development() -> bool {
-    let app_env = env::var("APP_ENV").ok();
-    let app_env = app_env
-        .as_ref()
-        .map(String::as_str)
-        .unwrap_or("development");
-
-    app_env == "development"
-}
-
 /// Lauch the update of config vars for every app in the config file.
 ///
 /// config: Config Struct
@@ -93,7 +78,7 @@ fn update_config_vars(config: cfg::Config) {
         println!("Updating app {}", app.name);
         if app.settings.is_empty() {
             println!(
-                "Skipping update for => {:?}, no settings were found.",
+                "Skipping update for => {}, no settings were found.",
                 app.name
             );
         } else {
