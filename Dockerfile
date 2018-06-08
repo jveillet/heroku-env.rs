@@ -2,6 +2,7 @@ FROM rust:1.26-slim-stretch
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV HOME /home/rusty
+ENV USER rusty
 
 RUN apt-get update -y \
       && apt-get --no-install-recommends install -y pkg-config apt-utils \
