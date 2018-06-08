@@ -8,7 +8,7 @@ extern crate serde_derive;
 extern crate serde;
 extern crate serde_yaml;
 
-use clap::App;
+use clap::{App, Arg};
 
 use dotenv::dotenv;
 use std::env;
@@ -20,16 +20,24 @@ mod config;
 use config::config as cfg;
 
 fn main() {
-    let _matches = App::new("heroku-env")
-        .version("0.0.3")
+    let matches = App::new("heroku-env")
+        .version("0.0.4")
         .author("Jérémie Veillet <jeremie.veillet@gmail.com>")
-        .about("Update environment variables on Heroku pipelines.")
+        .about("CLI to Update or create environment variables on Heroku written in Rust.")
+        .arg(
+            Arg::with_name("run")
+                .short("r")
+                .long("run")
+                .help("Create or update config vars on Heroku"),
+        )
         .get_matches();
 
     dotenv().expect("Couldn't find a .env file. Please create a .env file first.");
 
-    let heroku_config = cfg::Config::new(path());
-    update_config_vars(heroku_config);
+    if matches.is_present("run") {
+        let heroku_config = cfg::Config::new(path());
+        update_config_vars(heroku_config);
+    }
 }
 
 /// Intialize an Heroku Platform API Client
