@@ -39,4 +39,30 @@ pub mod heroku {
             headers
         }
     }
+
+    mod tests {
+        use super::*;
+
+        #[test]
+        fn has_token() {
+            let token = String::from("1234");
+            let client_test = PlatformAPI::new(token);
+            assert_eq!("1234", client_test.token);
+        }
+
+        #[test]
+        fn has_headers() {
+            let token = String::from("1234");
+            let mut client_test = PlatformAPI::new(token);
+            let headers = client_test.construct_headers();
+            let auth = headers.get_raw("Authorization").unwrap();
+            let accept = headers.get_raw("Accept").unwrap();
+            let content_type = headers.get_raw("Content-Type").unwrap();
+
+            assert_eq!(auth, "Bearer 1234");
+            assert_eq!(accept, "application/vnd.heroku+json; version=3");
+            assert_eq!(content_type, "application/json");
+        }
+
+    }
 }
