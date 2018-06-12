@@ -28,15 +28,16 @@ fn main() {
             Arg::with_name("run")
                 .short("r")
                 .long("run")
-                .help("Create or update config vars on Heroku")
+                .help("Create or update config vars on Heroku"),
         )
-        .arg(Arg::with_name("config")
+        .arg(
+            Arg::with_name("config")
                 .short("c")
                 .long("config")
                 .value_name("FILE")
                 .help("Sets a user defined config file in YAML format")
                 .takes_value(true)
-                .requires("run")
+                .requires("run"),
         )
         .get_matches();
 
@@ -44,13 +45,13 @@ fn main() {
 
     if matches.is_present("run") {
         let file_path;
-         if let Some(path) = matches.value_of("config") {
+        if let Some(path) = matches.value_of("config") {
             file_path = path.to_string();
-         } else {
+        } else {
             let home_dir = env::home_dir().unwrap();
             file_path = format!("{}/.heroku-env/config.yml", home_dir.display())
-         }
-        let heroku_config = cfg::Config::new(file_path);
+        }
+        let heroku_config = cfg::Config::from_path(file_path);
         update_config_vars(heroku_config);
     }
 }
