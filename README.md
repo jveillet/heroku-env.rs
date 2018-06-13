@@ -104,27 +104,15 @@ Or you can export it as an environment variable into in your `~/.bashrc` or `~/.
 $ export HK_API_TOKEN="my_api_token"
 ```
 
-### App Environment
-
-The tool can be used on two configurations, development mode, and production-like mode.
-
-By default, it will run in development mode.
-
-You can surcharge this mode by adding a `APP_ENV` key in the .env file.
-
-```bash
-$ echo "APP_ENV="production" >> .env
-```
-
 ### Preferences
 
 The utility needs a preferences file in order to update the config vars on Heroku, with informations about the apps and
 the settings.
 
-This file must be named `config.yml` and can live in two locations depending the context:
+This file must be a YAML file, by default the tool is looking for a `config.yml` in the `~/.heroku-env/` directory.
+For further informations about the configuration file location, see the [Usage](#Usage) section.
 
-* in a `config/config.yml` inside the project directory, if the project run in development mode.
-* In your home directory `~/.heroku-env/config.yml` in production mode.
+The file must be formatted like the example above:
 
 ```yaml
 version: "1"
@@ -144,12 +132,32 @@ apps:
 * name: name of the heroku app.
 * settings: List of config vars you want to update/create for this specific app, the format is base on a `KEY: "VALUE"` pair.
 
+## Tests
+
+Running tests:
+
+```bash
+$ cargo test
+```
+
 ## Usage
 
-There is no specific flags to add for now, invoke the executable (make sure you have a `.env` file and a `config.yml` file),
-by running `cargo run` or `target/release/heroku-env` if the app has been compiled, or in your `~/.bin/herolu-env` (make sure you added it
-into your PATH).
+```bash
+heroku-env 0.0.5
+Jérémie Veillet <jeremie.veillet@gmail.com>
+CLI to Update or create environment variables on Heroku written in Rust.
 
+USAGE:
+    heroku-env [FLAGS] [OPTIONS]
+
+FLAGS:
+    -h, --help       Prints help information
+    -r, --run        Create or update config vars on Heroku
+    -V, --version    Prints version information
+
+OPTIONS:
+    -c, --config <FILE>    Sets a user defined config file in YAML format
+```
 
 ## Contributing
 
@@ -181,9 +189,9 @@ Consider adding the ~"feature request" label on your ticket.
 ### Pull Requests
 
 1. Fork heroku-env
-2. Clone your fork (git clone https://gitlab.com/$YOUR_USERNAME/heroku-env && cd heroku-env)
-3. Create new branch (git checkout -b new-branch)
-4. Make your changes, and commit (git commit -am "your message")
+2. Clone your fork git clone `https://gitlab.com/$YOUR_USERNAME/heroku-env && cd heroku-env`
+3. Create new branch `git checkout -b new-branch`
+4. Make your changes, and commit `git commit -am "your message"`
 
 ## Licence.
 
