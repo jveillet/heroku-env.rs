@@ -38,7 +38,7 @@ Another way is to build using Docker (Dockerfile and docker-compose available).
 $ git clone git@gitlab.com:jveillet/heroku-env.git
 $ cd heroku-env
 $ cargo build --release
-$ cp target/release/heroku-env ~/.bin
+$ cargo run -- push
 ```
 
 #### Compile with Docker
@@ -48,8 +48,8 @@ $ git clone git@gitlab.com:jveillet/heroku-env.git
 $ cd heroku-env
 $ docker-compose build
 $ docker-compose run --rm app cargo build --release
-$ docker-compose run --rm app cargo run
-# OR
+$ docker-compose run --rm app cargo run -- push
+# Or
 $ docker-compose up
 ```
 
@@ -143,16 +143,31 @@ $ cargo test
 ## Usage
 
 ```bash
-heroku-env 0.0.5
+heroku-env 0.0.6
 Jérémie Veillet <jeremie.veillet@gmail.com>
 CLI to Update or create environment variables on Heroku written in Rust.
 
 USAGE:
-    heroku-env [FLAGS] [OPTIONS]
+    heroku-env [SUBCOMMAND]
 
 FLAGS:
     -h, --help       Prints help information
-    -r, --run        Create or update config vars on Heroku
+    -V, --version    Prints version information
+
+SUBCOMMANDS:
+    help    Prints this message or the help of the given subcommand(s)
+    push    Push local config vars to heroku
+```
+
+```bash
+heroku-env-push
+Push local config vars to heroku
+
+USAGE:
+    heroku-env push [OPTIONS]
+
+FLAGS:
+    -h, --help       Prints help information
     -V, --version    Prints version information
 
 OPTIONS:

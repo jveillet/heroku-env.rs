@@ -7,4 +7,4 @@ services:
     volumes:
       - ".:/home/rusty/src/heroku-env"
       - "./config/config.yml:/home/rusty/.heroku-env/config.yml"
-    command: cargo run
+    command: cargo run -- push
