@@ -1,15 +1,15 @@
 [package]
 
 name = "heroku-env"
-version = "0.0.5"
+version = "0.0.6"
 authors = [ "Jeremie Veillet <jeremie.veillet@gmail.com>" ]
 repository = "https://gitlab.com/jveillet/heroku-env"
 
 
 [dependencies]
-clap = "2.31"
-reqwest = "0.8.5"
-dotenv = "0.11.0"
-serde = "1.0"
-serde_derive = "1.0"
-serde_yaml = "0.7"
+clap = "2.31.2"
+reqwest = "0.8.6"
+dotenv = "0.13.0"
+serde = "1.0.66"
+serde_derive = "1.0.66"
+serde_yaml = "0.7.5"

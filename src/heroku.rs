@@ -40,6 +40,7 @@ pub mod heroku {
         }
     }
 
+    #[cfg(test)]
     mod tests {
         use super::*;
 
