@@ -1,8 +1,8 @@
 version: "1"
 apps:
-  - name: "qa-test-app"
+  - name: "fuzzy-test-app"
     settings:
       TEST_VAR: "my custom value"
       TEST_VAR2: "10"
-  - name: "staging-test-app"
+  - name: "fuzzy-staging-app"
 

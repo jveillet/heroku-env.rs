@@ -1,8 +1,7 @@
 version: "1"
 awesome_apps:
-  - name: "qa-test-app"
+  - name: "fuzzy-test-app"
     vars:
       TEST_VAR: "my custom value"
       TEST_VAR2: "10"
-  - name: "staging-test-app"
-
+  - name: "fuzzy-staging-app"

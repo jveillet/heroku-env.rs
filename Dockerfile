@@ -1,4 +1,4 @@
-FROM rust:1.26-slim-stretch
+FROM rust:1.27-stretch
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV HOME /home/rusty
@@ -29,4 +29,4 @@ RUN cargo build --release
 RUN mkdir -p $HOME/.heroku-env/
 COPY config/config.yml $HOME/.heroku-env/
 
-CMD ["cargo run"]
+CMD ["cargo run -- push"]
