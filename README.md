@@ -9,6 +9,8 @@ more apps on your Heroku pipelines.
 This utility is beta, it may crash and / or behave unexpectedly, please do not use it on production
 environments.
 
+This project started as a side project to learn Rust, so there is a lot of areas to improve.
+
 ## Getting Started
 
 ### Prerequisites
@@ -16,10 +18,9 @@ environments.
 You will need a version of the Rust Programming language (>= 1.25.0), it should come with Cargo, the Rust packet manager.
 See the [Rust documentation](https://doc.rust-lang.org/cargo/getting-started/installation.html) for more details.
 
-### Installing
+This project has only been tested on Linux (Debian based distro). Feel free to test it on another OS and share the outcomes.
 
-**Note**: It only have been tested on Linux (Debian based distro). Feel free to test it on another OS
-and share the outcome.
+### Installing
 
 ```bash
 $ git clone git@gitlab.com:jveillet/heroku-env.git
@@ -29,8 +30,7 @@ $ cargo install
 
 ### Compile from source
 
-**Note**: Same disclaimer has for the Installing part.
-Another way is to build using Docker (Dockerfile and docker-compose available).
+**Note**: You can also build this project using Docker (see the Compile with Docker section).
 
 #### Compile locally
 
@@ -143,7 +143,7 @@ $ cargo test
 ## Usage
 
 ```bash
-heroku-env 0.0.6
+heroku-env 0.0.7
 Jérémie Veillet <jeremie.veillet@gmail.com>
 CLI to Update or create environment variables on Heroku written in Rust.
 
@@ -179,8 +179,6 @@ OPTIONS:
 You want to contribute to the Project? Yeah!! :v: 🎉  Contributors are always welcome! :thumbsup:
 
 **Note**: One of the best ways to help right now is to use the utility and report issues!
-
-This project started as a side project to learn Rust, so there is a lot of areas to improve.
 
 ### Bugs
 
