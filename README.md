@@ -15,7 +15,7 @@ This project started as a side project to learn Rust, so there is a lot of areas
 
 ### Prerequisites
 
-You will need a version of the Rust Programming language (>= 1.25.0), it should come with Cargo, the Rust packet manager.
+You will need a version of the Rust Programming language (>= 1.27.0), it should come with Cargo, the Rust packet manager.
 See the [Rust documentation](https://doc.rust-lang.org/cargo/getting-started/installation.html) for more details.
 
 This project has only been tested on Linux (Debian based distro). Feel free to test it on another OS and share the outcomes.
@@ -38,7 +38,7 @@ $ cargo install
 $ git clone git@gitlab.com:jveillet/heroku-env.git
 $ cd heroku-env
 $ cargo build --release
-$ cargo run -- push
+$ cargo run -- push -c "my_dir/my_file.yml"
 ```
 
 #### Compile with Docker
@@ -48,9 +48,7 @@ $ git clone git@gitlab.com:jveillet/heroku-env.git
 $ cd heroku-env
 $ docker-compose build
 $ docker-compose run --rm app cargo build --release
-$ docker-compose run --rm app cargo run -- push
-# Or
-$ docker-compose up
+$ docker-compose run --rm app cargo run -- push "my_dir/my_file.yml"
 ```
 
 #### Rust formatting
@@ -72,6 +70,14 @@ Or use the Docker image built for this project.
 $ cd heroku-env
 $ docker-compose run --rm app cargo fmt
 ```
+
+##### Clippy
+
+Unfortunately, the [Clippy](https://github.com/rust-lang-nursery/rust-clippy) crate for linting code needs a version of Rust nightly in order to work, so support will be added when the library reaches v1.
+
+See this diclaimer from the Clippy Github repo:
+
+> As a general rule Clippy will only work with the latest Rust nightly for now.
 
 ## Configuration
 
@@ -104,15 +110,19 @@ Or you can export it as an environment variable into in your `~/.bashrc` or `~/.
 $ export HK_API_TOKEN="my_api_token"
 ```
 
-### Preferences
+### Interact with multiple heroku apps
 
-The utility needs a preferences file in order to update the config vars on Heroku, with informations about the apps and
-the settings.
+The utility can use a configuration file in order to update the config vars on Heroku, for multiple apps at once.
+This file can contain informations about the apps and the config vars values.
 
-This file must be a YAML file, by default the tool is looking for a `config.yml` in the `~/.heroku-env/` directory.
-For further informations about the configuration file location, see the [Usage](#Usage) section.
+This file must be a YAML file, the tool will be looking for the file path passed by the command line option `-c` or `--config`.
+For further informations, see the [Usage](#Usage) section.
 
-The file must be formatted like the example above:
+```bash
+$ heroku-env push -c "/my_path/config.yml"
+```
+
+#### Configuration file format
 
 ```yaml
 version: "1"
@@ -132,6 +142,15 @@ apps:
 * name: name of the heroku app.
 * settings: List of config vars you want to update/create for this specific app, the format is base on a `KEY: "VALUE"` pair.
 
+### Interact with a single heroku app
+
+You can interact with a single app's config vars, without using a configuration file. Use te `-a` or `--app` option with the app name,
+and pass the config vars in the form of KEY=VALUE separated by a whitespace bewteen each key-value pair.
+
+```bash
+$ heroku-env push -a fuzzy-app MY_VAR=MY_VALUE
+```
+
 ## Tests
 
 Running tests:
@@ -140,12 +159,20 @@ Running tests:
 $ cargo test
 ```
 
-## Usage
+With Docker:
 
 ```bash
-heroku-env 0.0.7
+$ docker-compose run --rm app cargo test
+```
+
+## Usage
+
+`$ heroku-env -h`
+
+```bash
+heroku-env 0.1.0
 Jérémie Veillet <jeremie.veillet@gmail.com>
-CLI to Update or create environment variables on Heroku written in Rust.
+CLI to interact with config vars on Heroku written in Rust.
 
 USAGE:
     heroku-env [SUBCOMMAND]
@@ -159,19 +186,25 @@ SUBCOMMANDS:
     push    Push local config vars to heroku
 ```
 
+`$ heroku-env push -h`
+
 ```bash
 heroku-env-push
 Push local config vars to heroku
 
 USAGE:
-    heroku-env push [OPTIONS]
+    heroku-env push [OPTIONS] <KEY=VALUE>... --app <NAME>
 
 FLAGS:
     -h, --help       Prints help information
     -V, --version    Prints version information
 
 OPTIONS:
+    -a, --app <NAME>       App to run command against
     -c, --config <FILE>    Sets a user defined config file in YAML format
+
+ARGS:
+    <KEY=VALUE>...    Key-Value pairs of config vars
 ```
 
 ## Contributing

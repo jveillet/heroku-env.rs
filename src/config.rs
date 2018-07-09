@@ -38,6 +38,18 @@ pub mod config {
     }
 
     impl Config {
+        pub fn new(app_name: &str, settings: HashMap<String, String>) -> Result<Self, String> {
+            let apps: Apps = Apps {
+                name: app_name.to_string(),
+                settings: settings,
+            };
+            let app_list = vec![apps];
+            let config: Config = Config {
+                version: "1".to_string(),
+                apps: app_list,
+            };
+            Ok(config)
+        }
         /// Load a configuration structure from a file path
         ///
         /// # Arguments

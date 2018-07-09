@@ -19,13 +19,18 @@
 //!
 //! # Usage
 //! ```
-//! heroku-env 0.0.6
+//! heroku-env 0.1.0
 //! Jérémie Veillet <jeremie.veillet@gmail.com>
 //! CLI to Update or create environment variables on Heroku written in Rust.
 //!
 //! USAGE:
+//! heroku-env 0.1.0
+//! Jérémie Veillet <jeremie.veillet@gmail.com>
+//! CLI to interact with config vars on Heroku written in Rust.
+//!
+//! USAGE:
 //!    heroku-env [SUBCOMMAND]
-
+//!
 //! FLAGS:
 //!    -h, --help       Prints help information
 //!    -V, --version    Prints version information
@@ -58,21 +63,41 @@ use heroku::heroku as platform_api;
 mod config;
 use config::config as cfg;
 
+use std::collections::HashMap;
+
 fn main() {
     let matches = App::new("heroku-env")
-        .version("0.0.7")
+        .version("0.1.0")
         .author("Jérémie Veillet <jeremie.veillet@gmail.com>")
-        .about("CLI to Update or create environment variables on Heroku written in Rust.")
+        .about("CLI to interact with config vars on Heroku written in Rust.")
         .subcommand(
             SubCommand::with_name("push")
                 .about("Push local config vars to heroku")
+                .arg(
+                    Arg::with_name("app")
+                        .short("a")
+                        .long("app")
+                        .value_name("NAME")
+                        .help("App to run command against")
+                        .required_unless("config")
+                        .takes_value(true),
+                )
                 .arg(
                     Arg::with_name("config")
                         .short("c")
                         .long("config")
                         .value_name("FILE")
                         .help("Sets a user defined config file in YAML format")
+                        .conflicts_with("app")
                         .takes_value(true),
+                )
+                .arg(
+                    Arg::with_name("vars")
+                        .value_name("KEY=VALUE")
+                        .help("Key-Value pairs of config vars ")
+                        .required_unless("config")
+                        .takes_value(true)
+                        .multiple(true),
                 ),
         )
         .get_matches();
@@ -81,10 +106,18 @@ fn main() {
 
     match matches.subcommand() {
         ("push", Some(push_matches)) => {
-            if let Some(config_matches) = push_matches.value_of("config") {
-                push(config_matches.to_string());
-            } else {
-                push(default_file_path().to_string());
+            if push_matches.is_present("app") {
+                if let Some(a) = push_matches.value_of("app") {
+                    let app_name = a.to_string();
+                    let settings = config_vars_from_args(push_matches);
+                    push_single_app(&app_name, settings);
+                }
+            }
+            if let Some(_c) = push_matches.value_of("config") {
+                if let Some(config_matches) = push_matches.value_of("config") {
+                    println!("Push with CONFIG FILE {}", config_matches.to_string());
+                    push(config_matches.to_string());
+                }
             }
         }
         ("", None) => println!(
@@ -107,18 +140,39 @@ fn push(config_file_path: String) {
     }
 }
 
-/// Defaut file path of the config file
+/// Push heroku config vars for a single app
+///
+/// # Arguments
+///
+/// * `app_name` - The app to update.
+/// * `settings` - a HashMap containing list of config vars (key-value pairs).
+///
+fn push_single_app(app_name: &str, settings: HashMap<String, String>) {
+    match cfg::Config::new(&app_name, settings) {
+        Ok(heroku_config) => update_config_vars(heroku_config),
+        Err(err) => println!("Error: {}", err),
+    }
+}
+
+/// Construct a Map of config vars (key-value pairs) from the command line arguments
+///
+/// # Arguments
+///
+/// * `push_matches` - List of command line arguments matchers (see clap documentation)
 ///
 /// # Result
-/// * `String` - The config file in the home directory of the user.
 ///
-/// # Examples
+/// * `HaspMap<String, String>` - Map of config vars (key-value pairs)
 ///
-/// - `default_file_path()` -> `/home/john/.heroku-env/config.yml`
-///
-fn default_file_path() -> String {
-    let home_dir = env::home_dir().unwrap();
-    format!("{}/.heroku-env/config.yml", home_dir.display())
+fn config_vars_from_args(push_matches: &clap::ArgMatches) -> HashMap<String, String> {
+    let mut settings: HashMap<String, String> = HashMap::new();
+    if let Some(vars) = push_matches.values_of("vars") {
+        for var in vars {
+            let key_value: Vec<&str> = var.split("=").collect();
+            settings.insert(key_value[0].to_string(), key_value[1].to_string());
+        }
+    }
+    settings
 }
 
 /// Intialize an Heroku Platform API Client
@@ -145,13 +199,26 @@ fn update_config_vars(config: cfg::Config) {
     for app in config.apps {
         if app.settings.is_empty() {
             println!(
-                "Skipping update for => {}, no settings were found.",
+                "Skipping update for app {}, no settings were found.",
                 app.name
             );
         } else {
-            println!(".:: Updating heroku app {}", app.name);
-            client.set_config_vars(app.name.to_string(), app.settings);
-            println!("Done ::.");
+            println!("Updating heroku app {}...", app.name);
+            match client.set_config_vars(app.name.to_string(), app.settings) {
+                Ok(config_vars) => {
+                    for arg in config_vars {
+                        println!("{}", arg);
+                    }
+                }
+                Err(platform_error) => {
+                    println!(
+                        "PlatformError: {}, {}",
+                        platform_error.id, platform_error.message
+                    );
+                    break;
+                }
+            }
+            println!("Done.");
         }
     }
 }
