@@ -79,9 +79,7 @@ See this diclaimer from the Clippy Github repo:
 
 > As a general rule Clippy will only work with the latest Rust nightly for now.
 
-## Configuration
-
-### Heroku Personal OAuth Token
+## Heroku Personal OAuth Token
 
 In order to use the Heroku Platform API, you must obtain a Personal OAuth Token.
 
@@ -110,67 +108,12 @@ Or you can export it as an environment variable into in your `~/.bashrc` or `~/.
 $ export HK_API_TOKEN="my_api_token"
 ```
 
-### Interact with multiple heroku apps
-
-The utility can use a configuration file in order to update the config vars on Heroku, for multiple apps at once.
-This file can contain informations about the apps and the config vars values.
-
-This file must be a YAML file, the tool will be looking for the file path passed by the command line option `-c` or `--config`.
-For further informations, see the [Usage](#Usage) section.
-
-```bash
-$ heroku-env push -c "/my_path/config.yml"
-```
-
-#### Configuration file format
-
-```yaml
-version: "1"
-apps:
-  - name: "my_app"
-    settings:
-      MY_TEST_VAR: "VALUE 1"
-      MY_TEST_VAR_2: "VALUE 2"
-  - name: "my_app_2"
-    settings:
-      MY_TEST_VAR: "VALUE 1"
-      MY_TEST_VAR_2: "VALUE 2"
-```
-
-* version: Version of the configuration file, must be set to "1".
-* apps: List of Heroku apps you want to update.
-* name: name of the heroku app.
-* settings: List of config vars you want to update/create for this specific app, the format is base on a `KEY: "VALUE"` pair.
-
-### Interact with a single heroku app
-
-You can interact with a single app's config vars, without using a configuration file. Use te `-a` or `--app` option with the app name,
-and pass the config vars in the form of KEY=VALUE separated by a whitespace bewteen each key-value pair.
-
-```bash
-$ heroku-env push -a fuzzy-app MY_VAR=MY_VALUE
-```
-
-## Tests
-
-Running tests:
-
-```bash
-$ cargo test
-```
-
-With Docker:
-
-```bash
-$ docker-compose run --rm app cargo test
-```
-
 ## Usage
 
 `$ heroku-env -h`
 
 ```bash
-heroku-env 0.1.0
+heroku-env 0.1.1
 Jérémie Veillet <jeremie.veillet@gmail.com>
 CLI to interact with config vars on Heroku written in Rust.
 
@@ -183,8 +126,11 @@ FLAGS:
 
 SUBCOMMANDS:
     help    Prints this message or the help of the given subcommand(s)
+    pull    Pull heroku config vars down to the local environment
     push    Push local config vars to heroku
 ```
+
+### Push config vars
 
 `$ heroku-env push -h`
 
@@ -205,6 +151,87 @@ OPTIONS:
 
 ARGS:
     <KEY=VALUE>...    Key-Value pairs of config vars
+```
+
+#### Push config vars for a single heroku app
+
+You can set config vars for a single heroku app, by using a `-a` or `--app` option with the app name as the option value,
+and pass the config vars in the form of KEY=VALUE separated by a whitespace bewteen each key-value pair.
+
+```bash
+$ heroku-env push -a fuzzy-app MY_VAR=MY_VALUE
+```
+
+#### Push config vars for multiple heroku apps
+
+The utility can use a configuration file in order to update the config vars on Heroku, for multiple apps at once.
+This file can contain informations about the apps and the config vars values.
+
+This file must be a YAML file, the tool will be looking for the file path passed by the command line option `-c` or `--config`.
+
+```bash
+$ heroku-env push -c "/my_path/config.yml"
+```
+
+##### Definition of the YAML configuration file
+
+```yaml
+version: "1"
+apps:
+  - name: "my_app"
+    settings:
+      MY_TEST_VAR: "VALUE 1"
+      MY_TEST_VAR_2: "VALUE 2"
+  - name: "my_app_2"
+    settings:
+      MY_TEST_VAR: "VALUE 1"
+      MY_TEST_VAR_2: "VALUE 2"
+```
+
+* version: Version of the configuration file, must be set to "1".
+* apps: List of Heroku apps you want to update.
+* name: name of the heroku app.
+* settings: List of config vars you want to update/create for this specific app, the format is base on a `KEY: "VALUE"` pair.
+
+### Pull config vars
+
+`$ heroku-env pull -h`
+
+```bash
+heroku-env-pull
+Pull heroku config vars down to the local environment
+
+USAGE:
+    heroku-env pull [OPTIONS]
+
+FLAGS:
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+
+OPTIONS:
+    -a, --app <NAME>    App to run command against
+```
+
+#### Pull a single heroku app
+
+```bash
+$ heroku-env pull -a my-fuzzy-app
+ENV=test
+CLOUD_URL=https://www.github.com
+```
+
+## Tests
+
+Running tests:
+
+```bash
+$ cargo test
+```
+
+With Docker:
+
+```bash
+$ docker-compose run --rm app cargo test
 ```
 
 ## Contributing
