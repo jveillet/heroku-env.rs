@@ -93,6 +93,43 @@ pub mod heroku {
             Ok(self.success_from_response(&result))
         }
 
+        /// Get config vars on heroku
+        ///
+        /// # Arguments
+        ///
+        /// * `app_name` - A string containing the app to push config vars
+        ///
+        /// # Result
+        ///
+        /// * `Result<Vec<String>, PlatformError>` - Vector with strings (key=value), or PaltformError struct
+        ///
+        /// # Example
+        ///
+        /// ```rust
+        /// let mut client = heroku::heroku::PlatformAPI::new("1234");
+        /// let name = String::from("my-app");
+        /// let result: Result<Vec<String>, PlatformError> = client.get_config_vars(name);
+        /// assert!(result.is_ok());
+        /// ```
+        pub fn get_config_vars(&mut self, app_name: String) -> Result<Vec<String>, PlatformError> {
+            let url = format!("https://api.heroku.com/apps/{}/config-vars", app_name);
+
+            let mut response = self.client
+                .get(&url)
+                .headers(self.construct_headers())
+                .send()
+                .expect("Error: failed to get the app config vars.");
+
+            // Read the body response from the API call in raw text
+            let result = response.text().unwrap();
+
+            if !response.status().is_success() {
+                return Err(self.error_from_response(&result));
+            }
+
+            Ok(self.success_from_response(&result))
+        }
+
         /// Map a successful response from the heroku API to a Vector
         ///
         /// # Arguments
@@ -189,6 +226,15 @@ pub mod heroku {
             settings.insert("key".to_string(), "value".to_string());
 
             let result = client.set_config_vars(app_name, settings);
+            assert!(result.is_err());
+        }
+
+        #[test]
+        fn should_fail_to_get_config_vars() {
+            let token = String::from("1234");
+            let mut client = PlatformAPI::new(token);
+            let app_name = "fuzzy-app".to_string();
+            let result = client.get_config_vars(app_name);
             assert!(result.is_err());
         }
 

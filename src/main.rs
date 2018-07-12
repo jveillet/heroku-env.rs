@@ -19,7 +19,7 @@
 //!
 //! # Usage
 //! ```
-//! heroku-env 0.1.0
+//! heroku-env 0.1.1
 //! Jérémie Veillet <jeremie.veillet@gmail.com>
 //! CLI to Update or create environment variables on Heroku written in Rust.
 //!
@@ -37,6 +37,7 @@
 //!
 //! SUBCOMMANDS:
 //!    help    Prints this message or the help of the given subcommand(s)
+//!    pull    Pull heroku config vars down to the local environment
 //!    push    Push local config vars to heroku
 //! ```
 //!
@@ -67,7 +68,7 @@ use std::collections::HashMap;
 
 fn main() {
     let matches = App::new("heroku-env")
-        .version("0.1.0")
+        .version("0.1.1")
         .author("Jérémie Veillet <jeremie.veillet@gmail.com>")
         .about("CLI to interact with config vars on Heroku written in Rust.")
         .subcommand(
@@ -100,6 +101,18 @@ fn main() {
                         .multiple(true),
                 ),
         )
+        .subcommand(
+            SubCommand::with_name("pull")
+                .about("Pull heroku config vars down to the local environment")
+                .arg(
+                    Arg::with_name("app")
+                        .short("a")
+                        .long("app")
+                        .value_name("NAME")
+                        .help("App to run command against")
+                        .takes_value(true),
+                ),
+        )
         .get_matches();
 
     dotenv().expect("Couldn't find a .env file. Please create a .env file first.");
@@ -115,8 +128,15 @@ fn main() {
             }
             if let Some(_c) = push_matches.value_of("config") {
                 if let Some(config_matches) = push_matches.value_of("config") {
-                    println!("Push with CONFIG FILE {}", config_matches.to_string());
                     push(config_matches.to_string());
+                }
+            }
+        }
+        ("pull", Some(pull_matches)) => {
+            if pull_matches.is_present("app") {
+                if let Some(a) = pull_matches.value_of("app") {
+                    let app_name = a.to_string();
+                    pull_single_app(&app_name);
                 }
             }
         }
@@ -151,6 +171,30 @@ fn push_single_app(app_name: &str, settings: HashMap<String, String>) {
     match cfg::Config::new(&app_name, settings) {
         Ok(heroku_config) => update_config_vars(heroku_config),
         Err(err) => println!("Error: {}", err),
+    }
+}
+
+/// Pull heroku config vars for a single app
+///
+/// # Arguments
+///
+/// * `app_name` - The app to read config vars from.
+///
+fn pull_single_app(app_name: &str) {
+    let mut client = heroku_client();
+
+    match client.get_config_vars(app_name.to_string()) {
+        Ok(config_vars) => {
+            for arg in config_vars {
+                println!("{}", arg);
+            }
+        }
+        Err(platform_error) => {
+            println!(
+                "PlatformError: {}, {}",
+                platform_error.id, platform_error.message
+            );
+        }
     }
 }
 
