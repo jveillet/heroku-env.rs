@@ -113,7 +113,7 @@ $ export HK_API_TOKEN="my_api_token"
 `$ heroku-env -h`
 
 ```bash
-heroku-env 0.1.1
+heroku-env 0.1.2
 Jérémie Veillet <jeremie.veillet@gmail.com>
 CLI to interact with config vars on Heroku written in Rust.
 
@@ -216,8 +216,24 @@ OPTIONS:
 
 ```bash
 $ heroku-env pull -a my-fuzzy-app
+my-fuzzy-app
 ENV=test
 CLOUD_URL=https://www.github.com
+-------------------------
+```
+
+#### Pull multiple heroku apps
+
+```bash
+$ heroku-env pull -a my-fuzzy-app -a my-second-fuzzy-app
+my-fuzzy-app
+ENV=test
+CLOUD_URL=https://www.github.com
+-------------------------
+my-second-fuzzy-app
+ENV=test
+CLOUD_URL=https://www.gitlab.com
+-------------------------
 ```
 
 ## Tests
