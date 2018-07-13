@@ -19,12 +19,8 @@
 //!
 //! # Usage
 //! ```
-//! heroku-env 0.1.1
-//! Jérémie Veillet <jeremie.veillet@gmail.com>
-//! CLI to Update or create environment variables on Heroku written in Rust.
-//!
 //! USAGE:
-//! heroku-env 0.1.0
+//! heroku-env 0.1.2
 //! Jérémie Veillet <jeremie.veillet@gmail.com>
 //! CLI to interact with config vars on Heroku written in Rust.
 //!
@@ -68,7 +64,7 @@ use std::collections::HashMap;
 
 fn main() {
     let matches = App::new("heroku-env")
-        .version("0.1.1")
+        .version("0.1.2")
         .author("Jérémie Veillet <jeremie.veillet@gmail.com>")
         .about("CLI to interact with config vars on Heroku written in Rust.")
         .subcommand(
@@ -110,6 +106,8 @@ fn main() {
                         .long("app")
                         .value_name("NAME")
                         .help("App to run command against")
+                        .multiple(true)
+                        .required(true)
                         .takes_value(true),
                 ),
         )
@@ -134,14 +132,16 @@ fn main() {
         }
         ("pull", Some(pull_matches)) => {
             if pull_matches.is_present("app") {
-                if let Some(a) = pull_matches.value_of("app") {
-                    let app_name = a.to_string();
-                    pull_single_app(&app_name);
+                if let Some(apps) = pull_matches.values_of("app") {
+                    for app in apps {
+                        let app_name = app.to_string();
+                        pull_single_app(&app_name);
+                    }
                 }
             }
         }
         ("", None) => println!(
-            "No subcommand was used. For a list of subcommand, please try heroku-env --help"
+            "No subcommand was used. For a list of subcommands, please try heroku-env --help"
         ), // If no subcommand was used it'll match the tuple ("", None)
         _ => unreachable!(), // If all subcommands are defined above, anything else is unreachable!()
     }
@@ -185,9 +185,11 @@ fn pull_single_app(app_name: &str) {
 
     match client.get_config_vars(app_name.to_string()) {
         Ok(config_vars) => {
+            println!("{}", app_name.to_string());
             for arg in config_vars {
                 println!("{}", arg);
             }
+            println!("-------------------------");
         }
         Err(platform_error) => {
             println!(
@@ -247,12 +249,13 @@ fn update_config_vars(config: cfg::Config) {
                 app.name
             );
         } else {
-            println!("Updating heroku app {}...", app.name);
             match client.set_config_vars(app.name.to_string(), app.settings) {
                 Ok(config_vars) => {
+                    println!("{}", app.name);
                     for arg in config_vars {
                         println!("{}", arg);
                     }
+                    println!("-------------------------");
                 }
                 Err(platform_error) => {
                     println!(
@@ -262,7 +265,6 @@ fn update_config_vars(config: cfg::Config) {
                     break;
                 }
             }
-            println!("Done.");
         }
     }
 }
