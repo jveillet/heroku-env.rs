@@ -255,10 +255,10 @@ pub mod config {
             let mut settings: HashMap<String, String> = HashMap::new();
             settings.insert("MY_VAR".to_string(), "my_value".to_string());
             let mut config = Config::from_app(&app_name, settings).unwrap();
-            let result = config.save("config/test.yml");
+            let result = config.save("tests/test.yml");
             assert_eq!(
                 result.unwrap(),
-                "Successfully created config file at config/test.yml"
+                "Successfully created config file at tests/test.yml"
             );
         }
     }
