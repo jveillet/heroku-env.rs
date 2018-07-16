@@ -1,4 +1,4 @@
-//! heroku-env is a command line utility to intercat with heroku config vars
+//! heroku-env is a command line utility to intercat with heroku config vars written in Rust
 //!
 //! Project Repository: (https://gitlab.com/jveillet/heroku-env)[gitlab.com/jveillet/heroku-env]
 //!
@@ -20,7 +20,7 @@
 //! # Usage
 //! ```
 //! USAGE:
-//! heroku-env 0.1.2
+//! heroku-env 0.1.3
 //! Jérémie Veillet <jeremie.veillet@gmail.com>
 //! CLI to interact with config vars on Heroku written in Rust.
 //!
@@ -64,7 +64,7 @@ use std::collections::HashMap;
 
 fn main() {
     let matches = App::new("heroku-env")
-        .version("0.1.2")
+        .version("0.1.3")
         .author("Jérémie Veillet <jeremie.veillet@gmail.com>")
         .about("CLI to interact with config vars on Heroku written in Rust.")
         .subcommand(
@@ -109,6 +109,14 @@ fn main() {
                         .multiple(true)
                         .required(true)
                         .takes_value(true),
+                )
+                .arg(
+                    Arg::with_name("output")
+                        .short("o")
+                        .long("output")
+                        .value_name("FILE")
+                        .help("Save the output to a config file in YAML format")
+                        .takes_value(true),
                 ),
         )
         .get_matches();
@@ -133,10 +141,13 @@ fn main() {
         ("pull", Some(pull_matches)) => {
             if pull_matches.is_present("app") {
                 if let Some(apps) = pull_matches.values_of("app") {
-                    for app in apps {
-                        let app_name = app.to_string();
-                        pull_single_app(&app_name);
+                    let mut path = String::new();
+                    if pull_matches.is_present("output") {
+                        if let Some(output) = pull_matches.value_of("output") {
+                            path = output.to_string();
+                        }
                     }
+                    pull(apps, &path)
                 }
             }
         }
@@ -168,34 +179,52 @@ fn push(config_file_path: String) {
 /// * `settings` - a HashMap containing list of config vars (key-value pairs).
 ///
 fn push_single_app(app_name: &str, settings: HashMap<String, String>) {
-    match cfg::Config::new(&app_name, settings) {
+    match cfg::Config::from_app(&app_name, settings) {
         Ok(heroku_config) => update_config_vars(heroku_config),
         Err(err) => println!("Error: {}", err),
     }
 }
 
-/// Pull heroku config vars for a single app
+/// Pull config vars down to the local machine for one or more apps
 ///
 /// # Arguments
 ///
-/// * `app_name` - The app to read config vars from.
+/// * `apps` - An iterator to get arguments from command line
+/// * `path` - A String containing the path to the file to write config vars into. Leave blank
+/// to not create a file
 ///
-fn pull_single_app(app_name: &str) {
+fn pull(apps: clap::Values, path: &str) {
     let mut client = heroku_client();
 
-    match client.get_config_vars(app_name.to_string()) {
-        Ok(config_vars) => {
-            println!("{}", app_name.to_string());
-            for arg in config_vars {
-                println!("{}", arg);
+    let mut config: cfg::Config = cfg::Config::new();
+    for app in apps {
+        match client.get_config_vars(app.to_string()) {
+            Ok(config_vars) => {
+                let mut heroku_app = cfg::App::new();
+                println!("{}", app.to_string());
+                heroku_app.name = app.to_string();
+                for arg in config_vars {
+                    println!("{}", arg);
+                    let tuple: Vec<&str> = arg.split("=").collect();
+                    heroku_app
+                        .settings
+                        .insert(tuple[0].to_string(), tuple[1].to_string());
+                }
+                println!("-------------------------");
+                config.apps.push(heroku_app);
             }
-            println!("-------------------------");
+            Err(platform_error) => {
+                println!(
+                    "PlatformError: {}, {}",
+                    platform_error.id, platform_error.message
+                );
+            }
         }
-        Err(platform_error) => {
-            println!(
-                "PlatformError: {}, {}",
-                platform_error.id, platform_error.message
-            );
+    }
+    if !path.to_string().is_empty() {
+        match config.save(path) {
+            Ok(s) => println!("{}", s),
+            Err(err) => println!("Error: {}", err),
         }
     }
 }
