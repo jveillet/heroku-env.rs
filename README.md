@@ -202,14 +202,15 @@ heroku-env-pull
 Pull heroku config vars down to the local environment
 
 USAGE:
-    heroku-env pull [OPTIONS]
+    heroku-env pull [OPTIONS] --app <NAME>...
 
 FLAGS:
     -h, --help       Prints help information
     -V, --version    Prints version information
 
 OPTIONS:
-    -a, --app <NAME>    App to run command against
+    -a, --app <NAME>...    App to run command against
+    -o, --output <FILE>    Save the output to a config file in YAML format
 ```
 
 #### Pull a single heroku app
@@ -234,6 +235,17 @@ my-second-fuzzy-app
 ENV=test
 CLOUD_URL=https://www.gitlab.com
 -------------------------
+```
+
+#### Save output into a YAML file
+
+```bash
+$ heroku-env pull -a my-fuzzy-app -o test.yml
+my-fuzzy-app
+ENV=test
+CLOUD_URL=https://www.gitlab.com
+-------------------------
+Successfully created config file at test.yml
 ```
 
 ## Tests
