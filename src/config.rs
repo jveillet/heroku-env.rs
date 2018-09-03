@@ -181,6 +181,7 @@ pub mod config {
     #[cfg(test)]
     mod tests {
         use super::*;
+        use std::fs;
 
         #[test]
         fn should_instanciate_from_app() {
@@ -260,6 +261,13 @@ pub mod config {
                 result.unwrap(),
                 "Successfully created config file at tests/test.yml"
             );
+        }
+
+        #[test]
+        fn should_remove_file_on_disk() {
+            // Remove the generated test file
+            let result = fs::remove_file("tests/test.yml");
+            assert_eq!(result.unwrap(), ());
         }
     }
 }

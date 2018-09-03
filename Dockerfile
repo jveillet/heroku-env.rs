@@ -1,4 +1,4 @@
-FROM rust:1.27-stretch
+FROM rust:1.28-slim-stretch
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV HOME /home/rusty
