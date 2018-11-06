@@ -5,7 +5,7 @@
 pub mod heroku {
 
     use reqwest;
-    use reqwest::header::{Authorization, ContentType, Headers};
+    use reqwest::header::{HeaderMap, HeaderValue, ACCEPT, CONTENT_TYPE, AUTHORIZATION};
     use serde_json;
     use serde_json::Value;
     use std::collections::HashMap;
@@ -181,13 +181,14 @@ pub mod heroku {
         ///
         /// # Result
         ///
-        /// * `Headers` - A Headers struct containing HTTP headers (see reqwest documentation)
+        /// * `HeaderMap` - A Headers Map containing HTTP headers (see reqwest documentation)
         ///
-        fn construct_headers(&mut self) -> Headers {
-            let mut headers = Headers::new();
-            headers.set_raw("Accept", "application/vnd.heroku+json; version=3");
-            headers.set(ContentType::json());
-            headers.set(Authorization(format!("Bearer {}", self.token)));
+        fn construct_headers(&mut self) -> HeaderMap {
+            let mut headers = HeaderMap::new();
+            headers.insert(ACCEPT, HeaderValue::from_static("application/vnd.heroku+json; version=3"));
+            headers.insert(CONTENT_TYPE, HeaderValue::from_static("application/json"));
+            let access_token = format!("Bearer {}", self.token);
+            headers.insert(AUTHORIZATION, HeaderValue::from_str(&access_token).unwrap());
             headers
         }
     }
@@ -208,13 +209,14 @@ pub mod heroku {
             let token = String::from("1234");
             let mut client_test = PlatformAPI::new(token);
             let headers = client_test.construct_headers();
-            let auth = headers.get_raw("Authorization").unwrap();
-            let accept = headers.get_raw("Accept").unwrap();
-            let content_type = headers.get_raw("Content-Type").unwrap();
 
-            assert_eq!(auth, "Bearer 1234");
-            assert_eq!(accept, "application/vnd.heroku+json; version=3");
-            assert_eq!(content_type, "application/json");
+            assert!(headers.contains_key(ACCEPT));
+            assert!(headers.contains_key(AUTHORIZATION));
+            assert!(headers.contains_key(CONTENT_TYPE));
+
+            assert_eq!(headers[ACCEPT], "application/vnd.heroku+json; version=3");
+            assert_eq!(headers[CONTENT_TYPE], "application/json");
+            assert_eq!(headers[AUTHORIZATION], "Bearer 1234");
         }
 
         #[test]

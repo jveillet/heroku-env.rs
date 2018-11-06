@@ -73,11 +73,18 @@ $ docker-compose run --rm app cargo fmt
 
 ##### Clippy
 
-Unfortunately, the [Clippy](https://github.com/rust-lang-nursery/rust-clippy) crate for linting code needs a version of Rust nightly in order to work, so support will be added when the library reaches v1.
+As of Rust 1.30, Clippy is now integrated with the stable version of Rust.
 
-See this diclaimer from the Clippy Github repo:
+You can now install it via `rustup component add clippy-preview`.
 
-> As a general rule Clippy will only work with the latest Rust nightly for now.
+You can also manually launch it via the command line:
+
+```bash
+$ cd heroku-env/
+$ cargo clippy
+# OR with Docker Compose
+$ docker-compose run --rm app cargo clippy
+```
 
 ## Heroku Personal OAuth Token
 
@@ -113,7 +120,7 @@ $ export HK_API_TOKEN="my_api_token"
 `$ heroku-env -h`
 
 ```bash
-heroku-env 0.1.2
+heroku-env 0.1.5
 Jérémie Veillet <jeremie.veillet@gmail.com>
 CLI to interact with config vars on Heroku written in Rust.
 
