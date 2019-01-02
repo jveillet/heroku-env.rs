@@ -1,16 +1,24 @@
 [package]
-
-name = "heroku-env"
-version = "0.1.5"
 authors = [ "Jeremie Veillet <jeremie.veillet@gmail.com>" ]
-repository = "https://gitlab.com/jveillet/heroku-env"
+categories = ["command-line-utilities"]
+description = "Update config vars for all your Heroku apps at once via the command line."
+homepage = "https://gitlab.com/jveillet/heroku-env-rs"
+keywords = ["cli", "heroku", "config vars"]
+license = "GNU GPLv3"
+name = "heroku-env-rs"
+readme = "README.md"
+repository = "https://gitlab.com/jveillet/heroku-env-rs"
+version = "0.1.6"
 
+[[bin]]
+name = "hke"
+path = "src/main.rs"
 
 [dependencies]
 clap = "2.32.0"
-reqwest = "0.9.4"
+reqwest = "0.9.5"
 dotenv = "0.13.0"
-serde = "1.0.80"
-serde_derive = "1.0.80"
-serde_yaml = "0.8.7"
-serde_json = "1.0.32"
+serde = "1.0.82"
+serde_derive = "1.0.82"
+serde_yaml = "0.8.8"
+serde_json = "1.0.33"

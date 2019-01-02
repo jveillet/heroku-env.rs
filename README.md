@@ -23,8 +23,8 @@ This project has only been tested on Linux (Debian based distro). Feel free to t
 ### Installing
 
 ```bash
-$ git clone git@gitlab.com:jveillet/heroku-env.git
-$ cd heroku-env
+$ git clone git@gitlab.com:jveillet/heroku-env-rs.git
+$ cd heroku-env-rs
 $ cargo install
 ```
 
@@ -35,8 +35,8 @@ $ cargo install
 #### Compile locally
 
 ```bash
-$ git clone git@gitlab.com:jveillet/heroku-env.git
-$ cd heroku-env
+$ git clone git@gitlab.com:jveillet/heroku-env-rs.git
+$ cd heroku-env-rs
 $ cargo build --release
 $ cargo run -- push -c "my_dir/my_file.yml"
 ```
@@ -44,8 +44,8 @@ $ cargo run -- push -c "my_dir/my_file.yml"
 #### Compile with Docker
 
 ```bash
-$ git clone git@gitlab.com:jveillet/heroku-env.git
-$ cd heroku-env
+$ git clone git@gitlab.com:jveillet/heroku-env-rs.git
+$ cd heroku-env-rs
 $ docker-compose build
 $ docker-compose run --rm app cargo build --release
 $ docker-compose run --rm app cargo run -- push "my_dir/my_file.yml"
@@ -59,7 +59,7 @@ Styleguide](https://github.com/rust-lang-nursery/fmt-rfcs).
 To run Rust fmt, either install it on your system with rustup:
 
 ```bash
-$ cd heroku-env
+$ cd heroku-env-rs
 $ rustup component add rustfmt-preview
 $ cargo fmt
 ```
@@ -67,7 +67,7 @@ $ cargo fmt
 Or use the Docker image built for this project.
 
 ```bash
-$ cd heroku-env
+$ cd heroku-env-rs
 $ docker-compose run --rm app cargo fmt
 ```
 
@@ -80,7 +80,7 @@ You can now install it via `rustup component add clippy-preview`.
 You can also manually launch it via the command line:
 
 ```bash
-$ cd heroku-env/
+$ cd heroku-env-rs/
 $ cargo clippy
 # OR with Docker Compose
 $ docker-compose run --rm app cargo clippy
@@ -104,7 +104,7 @@ machine api.heroku.com
 ```
 
 ```bash
-$ cd heroku-env
+$ cd heroku-env-rs/
 $ touch .env
 $ echo "HK_API_TOKEN=my_api_token" >> .env
 ```
@@ -117,15 +117,15 @@ $ export HK_API_TOKEN="my_api_token"
 
 ## Usage
 
-`$ heroku-env -h`
+`$ hke -h`
 
 ```bash
-heroku-env 0.1.5
+heroku-env-rs 0.1.6
 Jérémie Veillet <jeremie.veillet@gmail.com>
 CLI to interact with config vars on Heroku written in Rust.
 
 USAGE:
-    heroku-env [SUBCOMMAND]
+    hke [SUBCOMMAND]
 
 FLAGS:
     -h, --help       Prints help information
@@ -139,14 +139,14 @@ SUBCOMMANDS:
 
 ### Push config vars
 
-`$ heroku-env push -h`
+`$ hke push -h`
 
 ```bash
-heroku-env-push
+hke-push
 Push local config vars to heroku
 
 USAGE:
-    heroku-env push [OPTIONS] <KEY=VALUE>... --app <NAME>
+    hke push [OPTIONS] <KEY=VALUE>... --app <NAME>
 
 FLAGS:
     -h, --help       Prints help information
@@ -166,7 +166,7 @@ You can set config vars for a single heroku app, by using a `-a` or `--app` opti
 and pass the config vars in the form of KEY=VALUE separated by a whitespace bewteen each key-value pair.
 
 ```bash
-$ heroku-env push -a fuzzy-app MY_VAR=MY_VALUE
+$ hke push -a fuzzy-app MY_VAR=MY_VALUE
 ```
 
 #### Push config vars for multiple heroku apps
@@ -177,7 +177,7 @@ This file can contain informations about the apps and the config vars values.
 This file must be a YAML file, the tool will be looking for the file path passed by the command line option `-c` or `--config`.
 
 ```bash
-$ heroku-env push -c "/my_path/config.yml"
+$ hke push -c "/my_path/config.yml"
 ```
 
 ##### Definition of the YAML configuration file
@@ -202,14 +202,14 @@ apps:
 
 ### Pull config vars
 
-`$ heroku-env pull -h`
+`$ hke pull -h`
 
 ```bash
-heroku-env-pull
+hke-pull
 Pull heroku config vars down to the local environment
 
 USAGE:
-    heroku-env pull [OPTIONS] --app <NAME>...
+    hke pull [OPTIONS] --app <NAME>...
 
 FLAGS:
     -h, --help       Prints help information
@@ -223,7 +223,7 @@ OPTIONS:
 #### Pull a single heroku app
 
 ```bash
-$ heroku-env pull -a my-fuzzy-app
+$ hke pull -a my-fuzzy-app
 my-fuzzy-app
 ENV=test
 CLOUD_URL=https://www.github.com
@@ -233,7 +233,7 @@ CLOUD_URL=https://www.github.com
 #### Pull multiple heroku apps
 
 ```bash
-$ heroku-env pull -a my-fuzzy-app -a my-second-fuzzy-app
+$ hke pull -a my-fuzzy-app -a my-second-fuzzy-app
 my-fuzzy-app
 ENV=test
 CLOUD_URL=https://www.github.com
@@ -247,7 +247,7 @@ CLOUD_URL=https://www.gitlab.com
 #### Save output into a YAML file
 
 ```bash
-$ heroku-env pull -a my-fuzzy-app -o test.yml
+$ hke pull -a my-fuzzy-app -o test.yml
 my-fuzzy-app
 ENV=test
 CLOUD_URL=https://www.gitlab.com
@@ -277,7 +277,7 @@ You want to contribute to the Project? Yeah!! :v: 🎉  Contributors are always 
 
 ### Bugs
 
-If you find bugs, first go to the [issues page](https://gitlab.com/jveillet/heroku-env/issues) and search if a related issue isn't listed there.
+If you find bugs, first go to the [issues page](https://gitlab.com/jveillet/heroku-env-rs/issues) and search if a related issue isn't listed there.
 
 Create a new issue and insert any informations that can help to reproduce the observed behavior:
 * Command context
@@ -290,20 +290,20 @@ Consider adding the ~bug label on your ticket.
 
 ### Feature requests
 
-Create a new issue on the [issues page](https://gitlab.com/jveillet/heroku-env/issues) and add a clear description of what the new feature should look like.
+Create a new issue on the [issues page](https://gitlab.com/jveillet/heroku-env-rs/issues) and add a clear description of what the new feature should look like.
 
 Consider adding the ~"feature request" label on your ticket.
 
 ### Pull Requests
 
 1. Fork heroku-env
-2. Clone your fork git clone `https://gitlab.com/$YOUR_USERNAME/heroku-env && cd heroku-env`
+2. Clone your fork git clone `https://gitlab.com/$YOUR_USERNAME/heroku-env-rs && cd heroku-env-rs`
 3. Create new branch `git checkout -b new-branch`
 4. Make your changes, and commit `git commit -am "your message"`
 
 ## Licence.
 
-heroku-env is a free software: you can redistribute it and/or modify it under the terms of the [GNU GPL v3](LICENCE).
+heroku-env-rs is a free software: you can redistribute it and/or modify it under the terms of the [GNU GPL v3](LICENCE).
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
