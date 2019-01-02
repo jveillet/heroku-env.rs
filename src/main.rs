@@ -1,6 +1,6 @@
-//! heroku-env is a command line utility to intercat with heroku config vars written in Rust
+//! heroku-env-rs is a command line utility to intercat with heroku config vars written in Rust
 //!
-//! Project Repository: (https://gitlab.com/jveillet/heroku-env)[gitlab.com/jveillet/heroku-env]
+//! Project Repository: (https://gitlab.com/jveillet/heroku-env-rs)[gitlab.com/jveillet/heroku-env-rs]
 //!
 //! # Licence
 //!
@@ -20,12 +20,12 @@
 //! # Usage
 //! ```
 //! USAGE:
-//! heroku-env 0.1.5
+//! heroku-env-rs 0.1.6
 //! Jérémie Veillet <jeremie.veillet@gmail.com>
 //! CLI to interact with config vars on Heroku written in Rust.
 //!
 //! USAGE:
-//!    heroku-env [SUBCOMMAND]
+//!    hke [SUBCOMMAND]
 //!
 //! FLAGS:
 //!    -h, --help       Prints help information
@@ -63,8 +63,8 @@ use config::config as cfg;
 use std::collections::HashMap;
 
 fn main() {
-    let matches = App::new("heroku-env")
-        .version("0.1.5")
+    let matches = App::new("heroku-env-rs")
+        .version("0.1.6")
         .author("Jérémie Veillet <jeremie.veillet@gmail.com>")
         .about("CLI to interact with config vars on Heroku written in Rust.")
         .subcommand(
@@ -152,7 +152,7 @@ fn main() {
             }
         }
         ("", None) => println!(
-            "No subcommand was used. For a list of subcommands, please try heroku-env --help"
+            "No subcommand was used. For a list of subcommands, please try hke --help"
         ), // If no subcommand was used it'll match the tuple ("", None)
         _ => unreachable!(), // If all subcommands are defined above, anything else is unreachable!()
     }

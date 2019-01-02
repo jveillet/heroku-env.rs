@@ -5,6 +5,6 @@ services:
       context: .
     user: rusty
     volumes:
-      - ".:/home/rusty/src/heroku-env"
+      - ".:/home/rusty/heroku-env-rs"
       - "./config/config.yml:/home/rusty/.heroku-env/config.yml"
     command: cargo run -- push
