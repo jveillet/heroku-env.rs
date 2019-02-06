@@ -20,7 +20,7 @@
 //! # Usage
 //! ```
 //! USAGE:
-//! heroku-env-rs 0.1.6
+//! heroku-env-rs 0.1.7
 //! Jérémie Veillet <jeremie.veillet@gmail.com>
 //! CLI to interact with config vars on Heroku written in Rust.
 //!
@@ -55,16 +55,16 @@ use dotenv::dotenv;
 use std::env;
 
 mod heroku;
-use heroku::heroku as platform_api;
+use heroku as platform_api;
 
 mod config;
-use config::config as cfg;
+use config as cfg;
 
 use std::collections::HashMap;
 
 fn main() {
     let matches = App::new("heroku-env-rs")
-        .version("0.1.6")
+        .version("0.1.7")
         .author("Jérémie Veillet <jeremie.veillet@gmail.com>")
         .about("CLI to interact with config vars on Heroku written in Rust.")
         .subcommand(
@@ -151,9 +151,9 @@ fn main() {
                 }
             }
         }
-        ("", None) => println!(
-            "No subcommand was used. For a list of subcommands, please try hke --help"
-        ), // If no subcommand was used it'll match the tuple ("", None)
+        ("", None) => {
+            println!("No subcommand was used. For a list of subcommands, please try hke --help")
+        } // If no subcommand was used it'll match the tuple ("", None)
         _ => unreachable!(), // If all subcommands are defined above, anything else is unreachable!()
     }
 }
@@ -205,7 +205,7 @@ fn pull(apps: clap::Values, path: &str) {
                 heroku_app.name = app.to_string();
                 for arg in config_vars {
                     println!("{}", arg);
-                    let tuple: Vec<&str> = arg.split("=").collect();
+                    let tuple: Vec<&str> = arg.split('=').collect();
                     heroku_app
                         .settings
                         .insert(tuple[0].to_string(), tuple[1].to_string());
@@ -243,7 +243,7 @@ fn config_vars_from_args(push_matches: &clap::ArgMatches) -> HashMap<String, Str
     let mut settings: HashMap<String, String> = HashMap::new();
     if let Some(vars) = push_matches.values_of("vars") {
         for var in vars {
-            let key_value: Vec<&str> = var.split("=").collect();
+            let key_value: Vec<&str> = var.split('=').collect();
             settings.insert(key_value[0].to_string(), key_value[1].to_string());
         }
     }

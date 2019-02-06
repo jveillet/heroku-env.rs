@@ -8,7 +8,7 @@ license = "GNU GPLv3"
 name = "heroku-env-rs"
 readme = "README.md"
 repository = "https://gitlab.com/jveillet/heroku-env-rs"
-version = "0.1.6"
+version = "0.1.7"
 
 [[bin]]
 name = "hke"
@@ -16,9 +16,9 @@ path = "src/main.rs"
 
 [dependencies]
 clap = "2.32.0"
-reqwest = "0.9.5"
+reqwest = "0.9.9"
 dotenv = "0.13.0"
-serde = "1.0.82"
-serde_derive = "1.0.82"
+serde = "1.0.87"
+serde_derive = "1.0.87"
 serde_yaml = "0.8.8"
-serde_json = "1.0.33"
+serde_json = "1.0.38"
