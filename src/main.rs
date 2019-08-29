@@ -20,7 +20,7 @@
 //! # Usage
 //! ```
 //! USAGE:
-//! heroku-env-rs 0.1.7
+//! heroku-env-rs 0.1.8
 //! Jérémie Veillet <jeremie.veillet@gmail.com>
 //! CLI to interact with config vars on Heroku written in Rust.
 //!
@@ -64,7 +64,7 @@ use std::collections::HashMap;
 
 fn main() {
     let matches = App::new("heroku-env-rs")
-        .version("0.1.7")
+        .version("0.1.8")
         .author("Jérémie Veillet <jeremie.veillet@gmail.com>")
         .about("CLI to interact with config vars on Heroku written in Rust.")
         .subcommand(
